@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инфографика: Администрация Города Курска</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        .section-button {
+            background-color: #2563eb; /* Blue */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            font-weight: 600; /* semi-bold */
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .section-button:hover {
+            background-color: #1e40af; /* Darker blue on hover */
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem; /* rounded-2xl */
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px rgba(0, 0, 0, 0.15);
+        }
+        .card-icon {
+            font-size: 2.5rem; /* Larger icon size */
+            color: #4f46e5; /* Indigo */
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+        .card-title {
+            font-weight: 600;
+            color: #1a202c; /* Dark text */
+            margin-bottom: 0.5rem;
+        }
+        .card-description {
+            color: #4a5568; /* Gray text */
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto py-8">
+        <h1 class="text-4xl sm:text-5xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
+            Чем Занимается Администрация Города Курска
+        </h1>
+        <p class="text-lg text-gray-700 text-center mb-10 sm:mb-16 max-w-3xl mx-auto">
+            Администрация города Курска выполняет широкий круг функций для обеспечения жизнедеятельности и развития города. Ниже представлены основные направления её деятельности:
+        </p>
+
+        <!-- Section 1: Управление и Организация -->
+        <div class="mb-12 sm:mb-16">
+            <div class="section-button mx-auto w-fit text-xl sm:text-2xl mb-8">
+                Управление и Организация
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card">
+                    <span class="card-icon">🛠️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Формирование структуры</h3>
+                        <p class="card-description">Разрабатывает и утверждает структуру самой Администрации.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">⚖️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Правовое регулирование</h3>
+                        <p class="card-description">Проводит юридическую и антикоррупционную экспертизу нормативных актов.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏢</span>
+                    <div>
+                        <h3 class="card-title text-xl">Муниципальные предприятия</h3>
+                        <p class="card-description">Осуществляет функции учредителя для городских предприятий и учреждений.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Экономика и Финансы -->
+        <div class="mb-12 sm:mb-16">
+            <div class="section-button mx-auto w-fit text-xl sm:text-2xl mb-8">
+                Экономика и Финансы
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card">
+                    <span class="card-icon">📈</span>
+                    <div>
+                        <h3 class="card-title text-xl">Развитие города</h3>
+                        <p class="card-description">Разрабатывает и представляет программы социально-экономического развития.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">💰</span>
+                    <div>
+                        <h3 class="card-title text-xl">Налоговая политика</h3>
+                        <p class="card-description">Занимается вопросами местных налогов и сборов.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <div>
+                        <h3 class="card-title text-xl">Бюджет и прогноз</h3>
+                        <p class="card-description">Отвечает за финансовую деятельность, экономику и прогнозирование.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Благоустройство и Городское Хозяйство -->
+        <div class="mb-12 sm:mb-16">
+            <div class="section-button mx-auto w-fit text-xl sm:text-2xl mb-8">
+                Благоустройство и Городское Хозяйство
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card">
+                    <span class="card-icon">🌳</span>
+                    <div>
+                        <h3 class="card-title text-xl">Земельные ресурсы</h3>
+                        <p class="card-description">Ведет земельный кадастр, контролирует использование и охрану земель.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏗️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Градостроительство</h3>
+                        <p class="card-description">Разрабатывает Генеральный план города, проекты планировки и застройки.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏠</span>
+                    <div>
+                        <h3 class="card-title text-xl">ЖКХ</h3>
+                        <p class="card-description">Отвечает за жилищно-коммунальное хозяйство.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🛣️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Дороги</h3>
+                        <p class="card-description">Курирует дорожное хозяйство.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏙️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Городское хозяйство</h3>
+                        <p class="card-description">Занимается общими вопросами благоустройства и функционирования города.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Социальная Сфера -->
+        <div class="mb-12 sm:mb-16">
+            <div class="section-button mx-auto w-fit text-xl sm:text-2xl mb-8">
+                Социальная Сфера
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card">
+                    <span class="card-icon">🎓</span>
+                    <div>
+                        <h3 class="card-title text-xl">Образование</h3>
+                        <p class="card-description">Управление образовательными учреждениями.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">⛹️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Молодежь и спорт</h3>
+                        <p class="card-description">Развитие молодежной политики, физической культуры и спорта.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🤝</span>
+                    <div>
+                        <h3 class="card-title text-xl">Социальная защита</h3>
+                        <p class="card-description">Оказание поддержки населению.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🎭</span>
+                    <div>
+                        <h3 class="card-title text-xl">Культура и туризм</h3>
+                        <p class="card-description">Развитие культурной жизни и туристического потенциала города.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Внутренняя Политика и Информация -->
+        <div class="mb-12 sm:mb-16">
+            <div class="section-button mx-auto w-fit text-xl sm:text-2xl mb-8">
+                Внутренняя Политика и Информация
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card">
+                    <span class="card-icon">🏛️</span>
+                    <div>
+                        <h3 class="card-title text-xl">Внутренняя политика</h3>
+                        <p class="card-description">Координирует вопросы внутренней политики города.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">📰</span>
+                    <div>
+                        <h3 class="card-title text-xl">СМИ</h3>
+                        <p class="card-description">Управление информацией и работой с печатью.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Территориальные Органы -->
+        <div class="mb-12 sm:mb-16">
+            <div class="section-button mx-auto w-fit text-xl sm:text-2xl mb-8">
+                Территориальные Органы
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card">
+                    <span class="card-icon">🏢</span>
+                    <div>
+                        <h3 class="card-title text-xl">Администрация Железнодорожного округа</h3>
+                        <p class="card-description">Одно из территориальных подразделений для более эффективного управления районами города.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏢</span>
+                    <div>
+                        <h3 class="card-title text-xl">Администрация Сеймского округа</h3>
+                        <p class="card-description">Одно из территориальных подразделений для более эффективного управления районами города.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏢</span>
+                    <div>
+                        <h3 class="card-title text-xl">Администрация Центрального округа</h3>
+                        <p class="card-description">Одно из территориальных подразделений для более эффективного управления районами города.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-lg text-gray-700 text-center mt-10 sm:mt-16 max-w-3xl mx-auto">
+            Таким образом, Администрация Курска – это комплексный орган, обеспечивающий стабильность и развитие города во всех аспектах жизни.
+        </p>
+    </div>
+</body>
+</html>
