@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инфографика: Власть и Закон в Брянской области</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Narrative Plan: The infographic follows a narrative of "Official Rhetoric vs. Reality." It begins with a hook highlighting this paradox, presents key alarming statistics, and then drills down into specific branches of government (Executive, Legislative, Departments, Municipalities) to showcase key cases and systemic issues using targeted visualizations. The story concludes by summarizing the gap between stated anti-corruption efforts and the documented problems and the role of the information field. -->
+    <!-- Visualization Choices:
+        - Data Point: Key statistics (damage, number of officials with issues). Goal: Inform. Viz: Large, bold text numbers. Justification: Immediately conveys the scale of the problem. Method: HTML/CSS.
+        - Data Point: Composition of officials with legal issues across branches of power. Goal: Compare. Viz: Stacked Bar Chart. Justification: Clearly shows the proportion of problematic vs. clean officials across different levels. Library: Chart.js.
+        - Data Point: Frequency of corruption crime types. Goal: Relationships/Compare. Viz: Horizontal Bar Chart. Justification: Highlights the most common types of corruption across all branches of power. Library: Chart.js.
+        - Data Point: Individual officials and their legal status. Goal: Organize & Inform. Viz: Interactive cards with color-coded status icons and detailed modals. Justification: Creates a clean, scannable interface with on-demand access to specific case details.
+        - Data Point: Systemic issues in departments. Goal: Highlight institutional problems. Viz: Thematic text blocks with simple HTML/CSS diagrams (e.g., flow of corruption). Justification: Clearly presents contextual information.
+        - Data Point: Role of media. Goal: Inform. Viz: Textual descriptions of media influence. Justification: Conveys qualitative insight.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F4F4; /* Light background */
+            color: #2E2E2E; /* Dark gray for text */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px; /* Adjusted for better readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 380px; /* Adjusted height for charts */
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .status-badge-issue { background-color: #FEE2E2; color: #EF4444; } /* Red-100, Red-500 */
+        .status-badge-controversy { background-color: #FEF3C7; color: #F59E0B; } /* Yellow-100, Yellow-600 */
+        .status-badge-clean { background-color: #D1FAE5; color: #10B981; } /* Green-100, Green-600 */
+        .status-badge-systemic { background-color: #DBEAFE; color: #3B82F6; } /* Blue-100, Blue-600 */
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+        .section-header {
+            color: #0A2463; /* Dark blue from palette */
+        }
+        .text-accent {
+            color: #D8315B; /* Accent red from palette */
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.35rem;
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #D8315B; /* Accent red */
+            border-radius: 50%;
+            border: 2px solid #F4F4F4; /* Light background for contrast */
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.35rem;
+            top: 1.25rem;
+            width: 2px;
+            height: calc(100% - 1.25rem);
+            background-color: #3E92CC; /* Blue for line */
+        }
+        .timeline-item:last-child::after {
+            display: none;
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 90vh; /* Limit modal height */
+            overflow-y: auto; /* Enable scrolling for long content */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+
+        <header class="text-center my-12">
+            <h1 class="text-4xl md:text-5xl font-black section-header mb-4">ВЛАСТЬ И ЗАКОН В БРЯНСКОЙ ОБЛАСТИ</h1>
+            <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">Официальная риторика о борьбе с коррупцией сталкивается с реальностью громких арестов и скандалов, подрывающих доверие к высшим эшелонам власти региона.</p>
+        </header>
+
+        <section id="kpis" class="my-16">
+            <h2 class="text-3xl font-black section-header text-center mb-8">КЛЮЧЕВЫЕ ПОКАЗАТЕЛИ НЕДОБРОСОВЕСТНОСТИ</h2>
+            <p class="text-center text-gray-700 max-w-4xl mx-auto mb-10">Эти цифры отражают масштаб проблем с правовой целостностью среди должностных лиц Брянской области, от исполнительной власти до муниципального уровня.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="card">
+                    <p class="text-5xl md:text-6xl font-black text-accent" id="stats-total">0</p>
+                    <h3 class="text-lg font-semibold section-header mt-2">Чиновников в досье</h3>
+                    <p class="text-sm text-gray-600">Общее количество проанализированных должностных лиц.</p>
+                </div>
+                <div class="card">
+                    <p class="text-5xl md:text-6xl font-black text-accent" id="stats-issues">0</p>
+                    <h3 class="text-lg font-semibold section-header mt-2">С проблемами или скандалами</h3>
+                    <p class="text-sm text-gray-600">Должностные лица, замешанные в юридических проблемах или громких репутационных скандалах.</p>
+                </div>
+                <div class="card">
+                    <p class="text-5xl md:text-6xl font-black text-accent">~208 млн ₽</p>
+                    <h3 class="text-lg font-semibold section-header mt-2">Оцененный ущерб</h3>
+                    <p class="text-sm text-gray-600">Минимальный финансовый ущерб по ключевым уголовным делам.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="overall-analysis" class="my-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="card flex flex-col justify-between">
+                    <h2 class="text-2xl font-black section-header text-center mb-6">СРАВНИТЕЛЬНЫЙ АНАЛИЗ ПО ВЕТВЯМ ВЛАСТИ</h2>
+                    <p class="text-center text-gray-700 mb-8 flex-grow">Распределение должностных лиц с проблемами и без них по различным ветвям власти и департаментам Брянской области, демонстрирующее, где риски наиболее высоки.</p>
+                    <div class="chart-container">
+                        <canvas id="corruptionChart"></canvas>
+                    </div>
+                </div>
+                <div class="card flex flex-col justify-between">
+                    <h2 class="text-2xl font-black section-header text-center mb-6">АНАТОМИЯ ПРАВОНАРУШЕНИЙ</h2>
+                    <p class="text-center text-gray-700 mb-8 flex-grow">Наиболее распространенные типы правонарушений, зафиксированные среди должностных лиц, указывающие на основные "инструменты" коррупции в регионе.</p>
+                    <div class="chart-container">
+                        <canvas id="crimeTypesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="executive-profiles" class="my-16">
+            <h2 class="text-3xl font-black section-header text-center mb-8">ИСПОЛНИТЕЛЬНАЯ ВЛАСТЬ: КЛЮЧЕВЫЕ ПРОФИЛИ</h2>
+            <p class="text-center text-gray-700 max-w-4xl mx-auto mb-10">Этот раздел углубляется в досье на Губернатора и его ближайших заместителей, раскрывая их роли и детали их юридических проблем или спорных моментов.</p>
+            <div id="executive-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="legislative-profiles" class="my-16">
+            <h2 class="text-3xl font-black section-header text-center mb-8">ЗАКОНОДАТЕЛЬНАЯ ВЛАСТЬ: РУКОВОДСТВО И ОТСТАВКИ</h2>
+            <p class="text-center text-gray-700 max-w-4xl mx-auto mb-10">Здесь представлены ключевые фигуры Брянской областной Думы, с акцентом на случаи, когда действия депутатов приводили к расследованиям и потере мандатов.</p>
+            <div id="legislative-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="department-issues" class="my-16">
+            <h2 class="text-3xl font-black section-header text-center mb-8">ДЕПАРТАМЕНТЫ: СИСТЕМНЫЕ РИСКИ</h2>
+            <p class="text-center text-gray-700 max-w-4xl mx-auto mb-10">Анализ проблем в ключевых департаментах, даже если их руководители лично не были обвинены. Это указывает на глубокие уязвимости и недостаточность внутреннего контроля в важных сферах.</p>
+            <div id="departments-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+        
+        <section id="municipal-issues" class="my-16">
+            <h2 class="text-3xl font-black section-header text-center mb-8">МУНИЦИПАЛИТЕТЫ: ПРОБЛЕМЫ НА МЕСТАХ</h2>
+            <p class="text-center text-gray-700 max-w-4xl mx-auto mb-10">Случаи коррупции на уровне городов и районов, где конфликт интересов и растрата бюджетных средств напрямую влияют на жизнь граждан.</p>
+            <div id="municipalities-content"></div>
+        </section>
+
+        <section id="info-war" class="my-16 card">
+            <h2 class="text-3xl font-black section-header text-center mb-8">ИНФОРМАЦИОННОЕ ПОЛЕ БИТВЫ</h2>
+            <p class="text-center text-gray-700 max-w-4xl mx-auto mb-10">Медиа-ландшафт Брянской области превратился в ключевую арену политической борьбы, где провластные и оппозиционные СМИ, а также Telegram-каналы, активно формируют общественное мнение и интерпретируют события.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-lg text-gray-700">
+                <div>
+                    <h3 class="text-xl font-bold section-header mb-3">Фактор «Брянского ворчуна»</h3>
+                    <p class="mb-4">Независимое интернет-издание «Брянский ворчун» (<a href="https://avchernov.ru/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">avchernov.ru</a>) выступает как активный политический игрок, регулярно публикуя расследования о непотизме, острую критику и сатиру. Власти активно борются с этим ресурсом, что подтверждается исками.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold section-header mb-3">Telegram как политическая арена</h3>
+                    <p class="mb-4">Региональное пространство Telegram — это экосистема от проправительственных каналов до политических комментаторов. Ложное сообщение об аресте Николая Симоненко в марте 2023 года, растиражированное Telegram-каналами, вызвало серьезный информационный кризис, демонстрируя уязвимость правительства к информационным атакам. Контроль над нарративом стал постоянной борьбой.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center my-12 text-sm text-gray-500">
+            <p>Данная инфографика основана на анализе открытых источников, представленных в досье. Все данные актуальны на момент составления отчета. </p>
+            <p>Цель — визуализация общественно значимой информации, а не вынесение судебных вердиктов.</p>
+        </footer>
+
+    </div>
+
+    <!-- Modal for detailed profiles -->
+    <div id="modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-2xl transform scale-95">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 id="modal-name" class="text-2xl font-bold"></h3>
+                        <p id="modal-title" class="text-gray-500"></p>
+                    </div>
+                    <button id="modal-close" class="text-gray-400 hover:text-gray-800 text-3xl font-light">&times;</button>
+                </div>
+                <div id="modal-details" class="prose max-w-none text-gray-700"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const statusConfig = {
+    'Проблеми з законом': {
+        icon: '❗️',
+        color: 'border-red-400',
+        label: 'Проблеми с законом'
+    },
+    'Спорні моменти/Скандали': {
+        icon: '⚠️',
+        color: 'border-yellow-400',
+        label: 'Спорные моменты/Скандалы'
+    },
+    'Без проблем': {
+        icon: '✅',
+        color: 'border-green-400',
+        label: 'Без проблем'
+    },
+    'Системні проблеми': {
+        icon: '🏛️',
+        color: 'border-blue-400',
+        label: 'Системные проблемы'
+    }
+};
+
+const dossierData = {
+    executive: [
+        { name: "Александр Васильевич Богомаз", title: "Губернатор Брянской области", status: 'Спорні моменти/Скандали', details: `<strong>Контекст:</strong> Незважаючи на активну антикорупційну риторику, адміністрація Губернатора опинилася в центрі гучних корупційних скандалів, що торкнулися його найближчого оточення. Арешт двох т.в.о. заступників за обвинуваченням у хабарництві став серйозним ударом по іміджу влади.<br><br><strong>Проблема:</strong> Критики ставлять під сумнів ефективність його антикорупційної політики. Офіційні прес-релізи замовчували арешти високопоставлених чиновниць, що було сприйнято як спроба мінімізації репутаційних втрат. Це створює парадокс між заявленою політикою та фактичними подіями. <a href="http://club-rf.ru/32/detail/6719" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [4]</a>, <a href="https://avchernov.ru/news/molniya-dvoih-chlenov-bryanskogo-pravitelstva-mogli-zaderzhat-po-podozreniyu-v-korruptsii/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [24]</a>` },
+        { name: "Елена Егорова", title: "Т.в.о. заступника Губернатора (колишня)", status: 'Проблеми з законом', details: `<strong>Суть справи:</strong> Отримання хабара в особливо великому розмірі (4,4 млн руб.) у змові з Тетяною Кулешовою за укладення контракту на поставку ноутбуків за завищеною вартістю для потреб освіти.<br><br><strong>Статус:</strong> Арештована. <a href="http://regcomment.ru/regions/bryansk/tretya-chinovnitsa-iz-komandy-bogomaza-pod-sledstviem-chem-zakonchitsya-antikorruptsionnaya-chistka-v-bryanske/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [6]</a>, <a href="http://club-rf.ru/32/detail/6719" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [4]</a>` },
+        { name: "Татьяна Кулешова", title: "Т.в.о. заступника Губернатора (колишня)", status: 'Проблеми з законом', details: `<strong>Суть справи:</strong> Отримання хабара в особливо великому розмірі (4,4 млн руб.) у змові з Оленою Єгоровою за укладення контракту на поставку ноутбуків за завищеною вартістю.<br><br><strong>Статус:</strong> Арештована. <a href="http://regcomment.ru/regions/bryansk/tretya-chinovnitsa-iz-komandy-bogomaza-pod-sledstviem-chem-zakonchitsya-antikorruptsionnaya-chistka-v-bryanske/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [6]</a>, <a href="http://club-rf.ru/32/detail/6719" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [4]</a>` },
+        { name: "Александр Петроченко", title: "Колишній заступник Губернатора з регіональної безпеки", status: 'Проблеми з законом', details: `<strong>Суть справи:</strong> Звинувачений в отриманні хабара в особливо великому розмірі, затриманий на місці злочину. <a href="http://vybor-naroda.org/lentanovostey/272734-zaderzhan-byvshij-vice-gubernator-brjanskoj-oblasti-petrochenko.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [5]</a>, <a href="https://www.vedomosti.ru/strana/central/news/2024/10/22/1070312-eks-zamglavi-oblasti-zaderzhan" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [58]</a><br><br><strong>Статус:</strong> Арештований. Його арешт був використаний губернатором для демонстрації боротьби з корупцією. <a href="http://vybor-naroda.org/lentanovostey/272734-zaderzhan-byvshij-vice-gubernator-brjanskoj-oblasti-petrochenko.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [5]</a>`},
+        { name: "Николай Кириллович Симоненко", title: "Заместитель Губернатора (архитектура, строительство, дорожное хозяйство, ТЭК и ЖКХ, тарифы)", status: 'Проблеми з законом', details: `<strong>Справа про мошенничество (2007-2010-ті роки):</strong> Обвинувачений у шахрайстві з майном держпідприємства, що завдало збитків майже на 200 млн рублів. Після року в СІЗО був "реабілітований" і отримав компенсацію в 1 млн рублів. <a href="https://pravo.ru/news/view/72485/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [14]</a>, <a href="http://old.bryanskobl.ru/authority/vice/simonenko.php" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [11]</a><br><br><strong>Уголовне дело про перевищення посадових повноважень (2016 рік):</strong> Порушено нову кримінальну справу за незаконне виділення 5,5 соток землі (збиток 2,8 млн рублів) під будівництво ресторану. Звільнений під підписку про невиїзд. <a href="https://bryansku.ru/2016/02/03/nikolaj-simonenko-otpushhen-sudom-na-volyu/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [13]</a><br><br><strong>Ложні чутки:</strong> Був об'єктом широко розповсюджених, але хибних повідомлень про арешт у березні 2023 року. <a href="https://desnyanskaya-pravda.ru/society/2023/03/29/federalnye-i-bryanskie-telegram-kanaly-pospeshili-zaderzhat-zamgubernatora-simonenko/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [17]</a>` },
+        { name: "Виталий Александрович Свинцов", title: "Т.в.о. заступника Губернатора (інформаційна та внутрішня політика)", status: 'Спорні моменти/Скандали', details: `<strong>Контекст призначення:</strong> Його призначення викликало "потужну медіаатаку" на Губернатора через його минуле в опозиції (КПРФ) та на тлі антикорупційних розслідувань в адміністрації. <a href="https://bryansk.er.ru/person/e53c33ca-8275-4926-b405-748f10bebc01" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [56]</a>, <a href="http://www.bryanskobl.ru/deputy-governor/svintsov" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [57]</a>` },
+        { name: "Юрий Валентинович Филипенко", title: "Заместитель Губернатора (керівник адміністрації Губернатора та Уряду області, майнові відносини, охорона культурної спадщини)", status: 'Спорні моменти/Скандали', details: `<strong>Конфлікт зі ЗМІ:</strong> Ініціював адміністративну справу проти незалежного інтернет-видання «Брянский ворчун» за розповсюдження «фейкових новин». <a href="https://m.newsbryansk.ru/fn_597324.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [28]</a><br><br><strong>Публічна критика:</strong> Піддавався критиці за носіння американських «шпигунських» годинників Apple Watch під час військових навчань. <a href="https://avchernov.ru/avtorskaja_kolonka/serogo-kardinala-bryanshhiny-filipenko-uvideli-na-ucheniyah-v-shpion-chasah-iz-ssha/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [29]</a>` },
+        { name: "Ирина Витальевна Агафонова", title: "Заместитель Губернатора (соціальна політика, зайнятість населення, ЗАГС)", status: 'Спорні моменти/Скандали', details: `<strong>Кумовство (непотизм):</strong> Звинувачення у призначенні молодшого брата, Олександра Агафонова, керівником Державної житлової інспекції (ДЖІ) невдовзі після її вступу на посаду заступника губернатора. <a href="https://avchernov.ru/avtorskaja_kolonka/pristroit-brata-novym-glavoj-gzhi-bryanshhiny-nazyvayut-blizhajshego-rodstvennika-zamgubernatora-krasavitsy-iriny-agafonovoj/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [40]</a>, <a href="https://dzen.ru/a/ZBfSiQb85DbBo3rs" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [45]</a>` },
+        { name: "Денис Николаевич Амеличев", title: "Т.в.о. заступника Губернатора (промисловість, транспорт, зв'язок, фізична культура, спорт)", status: 'Без проблем', details: "Прямих відомостей про проблеми із законом або корупційні розслідування в наданих даних не виявлено. ЗМІ ставлять під сумнів його компетентність для ролі через молодий вік та відсутність профільного досвіду. <a href=\"https://avchernov.ru/ekonomika/zagadkoj-stala-biografiya-novogo-bryanskogo-zamgubernatora-35-letnego-amelicheva/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [51]</a>" },
+        { name: "Андрей Николаевич Бардуков", title: "Заместитель Губернатора (охорона здоров'я)", status: 'Спорні моменти/Скандали', details: `<strong>Проблеми в охороні здоров'я:</strong> Публічно визнав "катастрофічний дефіцит" педіатрів та інших лікарів. Був у центрі скандалів, пов'язаних з поставками інсуліну для дітей та смертністю дітей у перинатальному центрі. <a href="http://kprf32.com/news/obrashchenie-prinyatoe-na-sobranii-levyh-i-narodno-patrioticheskih-sil-bryanskoy-oblasti.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [37]</a>` },
+        { name: "Борис Иванович Грибанов", title: "Заместитель Губернатора (сільське господарство, природні ресурси та екологія)", status: 'Спорні моменти/Скандали', details: `<strong>Бездіяльність у сфері екології:</strong> Отримав "строгий догану" від губернатора Богомаза за провал у вирішенні проблеми з величезним звалищем біля міста Сельцо. <a href="https://avchernov.ru/tak-byvaet/bogomaz-vlepil-strogij-vygovor-gribanovu-i-mokrenko/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [48]</a>` },
+        { name: "Алексей Юрьевич Жук", title: "Т.в.о. заступника Губернатора (регіональна безпека, держзакупівлі, житлова інспекція, світова юстиція)", status: 'Без проблем', details: "Прямих відомостей про проблеми із законом або корупційні розслідування не виявлено. Призначений після арешту попередника для стабілізації напрямку регіональної безпеки. <a href=\"https://guberniya.tv/vlast/287929\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [9]</a>, <a href=\"https://news.nashbryansk.ru/2024/09/24/power/bryanskoy-oblasti-aleksee/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [53]</a>" },
+        { name: "Геннадий Владимирович Лемешов", title: "Заместитель Губернатора (керівник постійного представництва Уряду області при Уряді РФ у м. Москві)", status: 'Без проблем', details: "Прямих відомостей про проблеми із законом або корупційні розслідування в наданих даних не виявлено. <a href=\"http://www.bryanskobl.ru/deputy-governor/lemeshov\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [10]</a>" },
+        { name: "Валентина Михайловна Миронова", title: "Заместитель Губернатора (культура, освіта, наука)", status: 'Без проблем', details: "Прямих відомостей про проблеми із законом або корупційні розслідування не виявлено. <a href=\"http://www.bryanskobl.ru/deputy-governor/mironova\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [54]</a>" },
+        { name: "Галина Васильевна Петушкова", title: "Заместитель Губернатора (фінансова та економічна політика)", status: 'Без проблем', details: "Прямих відомостей про проблеми із законом або корупційні розслідування не виявлено. Має позитивну репутацію та визнана на федеральному рівні. <a href=\"https://bryansktoday.ru/article/240962\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [21]</a>" },
+    ],
+    legislative: [
+        { name: "Валентин Владимирович Суббот", title: "Председатель Брянской областной Думы", status: 'Без проблем', details: "Активно бере участь у роботі з протидії корупції. У наданих даних не виявлено прямих відомостей про особисті проблеми із законом. <a href=\"https://ru.wikipedia.org/wiki/%D0%93%D1%83%D0%B1%D0%B5%D1%80%D0%BD%D0%B0%D1%82%D0%BE%D1%80_%D0%91%D1%80%D1%8F%D0%BD%D1%81%D0%BA%D0%BE%D0%B9_%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D0%B8\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [4]</a>, <a href=\"https://riastrela.ru/p/72098/?special=Y\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [59]</a>" },
+        { name: "Сергей Сергеевич Антошин", title: "Колишній зам. Председателя, колишній Председатель Комітету по промисловості, будівництву, підприємництву та власності", status: 'Проблеми з законом', details: `<strong>Суть справи:</strong> "Поспішив скласти з себе депутатські повноваження через претензії прокуратури, яка викрила Антошина в нелегітимній для державного мужа інвестиційній діяльності". <a href="http://regcomment.ru/regions/bryansk/tretya-chinovnitsa-iz-komandy-bogomaza-pod-sledstviem-chem-zakonchitsya-antikorruptsionnaya-chistka-v-bryanske/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [67]</a><br><br><strong>Статус:</strong> Позбавлений мандата у травні 2023 року. Цей випадок є прямим прикладом проблем із законом у законодавчій гілці влади. <a href="https://avchernov.ru/news/molniya-dvoih-chlenov-bryanskogo-pravitelstva-mogli-zaderzhat-po-podozreniyu-v-korruptsii/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [21]</a>` },
+        { name: "Николай Николаевич Якушенко", title: "Заместитель Председателя Брянской областной Думы", status: 'Без проблем', details: "Прямих відомостей про проблеми із законом не виявлено. <a href=\"https://www.puteshestvie32.ru/content/petushkova\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [64]</a>" },
+        { name: "Владимир Михайлович Пронин", title: "Заместитель Председателя Брянской областной Думы", status: 'Без проблем', details: "Брав участь у засіданнях комісії з протидії корупції. Прямих відомостей про проблеми із законом не виявлено. <a href=\"https://bryansk.er.ru/person/2a32fc78-e3b3-4ff2-8f1f-4459d6f6a0bd\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [16]</a>" },
+    ],
+    departments: [
+        { name: "Сергей Александрович Галаганов", department: "Департамент охорони здоров'я", status: 'Системні проблеми', details: `<strong>Керівник:</strong> Щодо самого Галаганова прямих проблем із законом не виявлено. <a href="http://www.bryanskobl.ru/deputy-governor/bardukov" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [31]</a><br><br><strong>Системні проблеми:</strong> Відомство замішано в низці серйозних корупційних скандалів:<br><ul><li>- <strong>Березень 2024:</strong> Начальниця відділу закупівель онкодиспансеру засуджена на 7 років за великий хабар від фармкомпанії. <a href="https://avchernov.ru/kriminal/sk-rasskazal-detali-ugolovnogo-dela-eks-zamdirektora-bryanskogo-oblzdrava-borshhevskoj-obvinyaemoj-vo-vzyatochnichestve/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [77]</a></li><li>- <strong>Квітень 2023:</strong> Заст. директора Департаменту Лариса Борщевська затримана за підозрою у хабарництві понад 1,5 млн рублів. <a href="https://avchernov.ru/kriminal/sk-rasskazal-detali-ugolovnogo-dela-eks-zamdirektora-bryanskogo-oblzdrava-borshhevskoj-obvinyaemoj-vo-vzyatochnichestve/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [77]</a></li><li>- <strong>Квітень 2021:</strong> Співробітники моргу обласної лікарні обвинувачені в шахрайстві. <a href="http://vybor-naroda.org/lentanovostey/272734-zaderzhan-byvshij-vice-gubernator-brjanskoj-oblasti-petrochenko.html" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [80]</a></li></ul>` },
+        { name: "Алевтина Александровна Андреева", department: "Департамент освіти та науки", status: 'Системні проблеми', details: `<strong>Керівник:</strong> Прямих проблем із законом щодо Андреєвої не виявлено. <a href="http://www.bryanskobl.ru/deputy-governor/mironova" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [81]</a><br><br><strong>Системні проблеми:</strong> Департамент виявився безпосередньо пов'язаним з великим корупційним скандалом, у якому фігурували колишні т.в.о. заступників Губернатора Олена Єгорова та Тетяна Кулешова, пов'язаний з отриманням хабара за поставки ноутбуків. <a href="http://regcomment.ru/regions/bryansk/tretya-chinovnitsa-iz-komandy-bogomaza-pod-sledstviem-chem-zakonchitsya-antikorruptsionnaya-chistka-v-bryanske/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [17]</a>` },
+        { name: "Михаил Андреевич Ерохин", department: "Департамент економічного розвитку", status: 'Без проблем', details: "Прямих проблем із законом (уголовних обвинувачень, судимостей) не виявлено. У 2021 році він займав 135-е місце в рейтингу регіональних IT-чиновників за доходами. <a href=\"https://m.newsbryansk.ru/topin_156.html\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [68]</a>" },
+        { name: "Сергей Кириллович Симоненко", department: "Департамент сільського господарства", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. Важливо відзначити, що це інша особа, ніж Микола Кирилович Симоненко, заступник Губернатора, який мав проблеми із законом. <a href=\"https://bryansku.ru/2016/02/03/nikolaj-simonenko-otpushhen-sudom-na-volyu/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [71]</a>" },
+        { name: "Алексей Владиславович Ноздрачев", department: "Департамент внутрішньої політики", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://avchernov.ru/ekonomika/zagadkoj-stala-biografiya-novogo-bryanskogo-zamgubernatora-35-letnego-amelicheva/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [74]</a>" },
+        { name: "Евгений Александрович Петров", department: "Департамент соціальної політики та зайнятості населення", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://bryansku.ru/2016/02/03/nikolaj-simonenko-otpushhen-sudom-na-volyu/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [84]</a>" },
+        { name: "Александр Васильевич Минченко", department: "Департамент регіональної безпеки", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. Брав участь у семінарах з профілактики корупційних правопорушень. <a href=\"https://guberniya.tv/vlast/287929\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [12]</a>" },
+    ],
+    municipalities: [
+        { district: "Місто Брянськ", officials: [
+            { name: "Марина Валентиновна Дбар", title: "Глава м. Брянська", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://bryansk.er.ru/person/e53c33ca-8275-4926-b405-748f10bebc01\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [6]</a>" },
+            { name: "Александр Николаевич Макаров", title: "Глава Брянської міської адміністрації", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://avchernov.ru/news/molniya-dvoih-chlenov-bryanskogo-pravitelstva-mogli-zaderzhat-po-podozreniyu-v-korruptsii/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [90]</a>" },
+            { name: "Денис Александрович Семёнов", title: "Т.в.о. Глави адміністрації Радянського району", status: 'Спорні моменти/Скандали', details: `<strong>Контекст:</strong> Призначення викликало полеміку через відсутність "досвіду муніципальної служби" та зв'язок з попереднім скандалом (Сергій Антошин). <a href="https://avchernov.ru/news/molniya-dvoih-chlenov-bryanskogo-pravitelstva-mogli-zaderzhat-po-podozreniyu-v-korruptsii/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [67]</a>, <a href="https://avchernov.ru/ekonomika/zagadkoj-stala-biografiya-novogo-bryanskogo-zamgubernatora-35-letnego-amelicheva/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [92]</a>` },
+            { name: "Татьяна Владимировна Гращенкова", title: "Глава адміністрації Бежицького району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://www.bragazeta.ru/news/2023/04/05/v-bryanskoj-oblasti-iz-za-pavodka-vveli-rezhim-chrezvychajnoj-situacii/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [94]</a>" },
+            { name: "Александр Александрович Гаврилов", title: "Глава адміністрації Володарського району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://bryansk.er.ru/person/e53c33ca-8275-4926-b405-748f10bebc01\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [92]</a>" },
+            { name: "Светлана Васильевна Бледнова", title: "Глава адміністрації Фокінського району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено. <a href=\"https://m.newsbryansk.ru/fn_1451011.html\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-500 hover:underline\">Джерело [97]</a>" },
+        ]},
+        { district: "Місто Клинці", officials: [
+            { name: "Олег Павлович Шкуратов", title: "Глава м. Клинці", status: 'Проблеми з законом', details: `<strong>Суть справи:</strong> Звинувачення в конфлікті інтересів та нецільовому використанні муніципального майна для особистої комерційної вигоди (безкоштовна оренда офісів, зарплата співробітникам його компанії з бюджету, держзакупівлі під його організацію). <a href="https://www.bragazeta.ru/news/2023/04/05/v-bryanskoj-oblasti-iz-za-pavodka-vveli-rezhim-chrezvychajnoj-situacii/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [99]</a>` },
+            { name: "Сергей Юрьевич Евтеев", title: "Колишній мер м. Клинці", status: 'Проблеми з законом', details: `<strong>Суть справи:</strong> Засуджений за розтрату бюджетних коштів. Пізніше нова справа за перевищення повноважень (переказ 1 млн руб. за вже оплачені роботи), але був виправданий. <a href="https://avchernov.ru/news/molniya-dvoih-chlenov-bryanskogo-pravitelstva-mogli-zaderzhat-po-podozreniyu-v-korruptsii/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">Джерело [101]</a>` }
+        ]},
+        { district: "Брянський муніципальний район", officials: [
+            { name: "Дмитрий Леонидович Евич", title: "Глава Брянського району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+            { name: "Александр Александрович Пронин", title: "Глава адміністрації Брянського району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]},
+         { district: "Стародубський муніципальний округ", officials: [
+            { name: "Александр Владимирович Подольный", title: "Глава адміністрації", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]},
+        { district: "Жуковський муніципальний округ", officials: [
+            { name: "Олег Анатольевич Воронин", title: "Глава адміністрації", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]},
+        { district: "Дятьковський район", officials: [
+            { name: "Иван Матвеевич Арсенов", title: "Глава Дятьковського району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+            { name: "Павел Валерьевич Валяев", title: "Глава адміністрації Дятьковського району", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]},
+         { district: "Місто Новозибков", officials: [
+            { name: "Александр Владимирович Щипакин", title: "Глава Новозибковського міського округу", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]},
+        { district: "Місто Сельцо", officials: [
+            { name: "Евгений Александрович Дорофеев", title: "Глава м. Сельцо", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+            { name: "Игорь Юрьевич Помогаев", title: "Т.в.о. глави адміністрації", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]},
+        { district: "Місто Фокино", officials: [
+            { name: "Оксана Валерьевна Попович", title: "Глава м. Фокино", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+            { name: "Виктор Викторович Степин", title: "Глава адміністрації", status: 'Без проблем', details: "Прямих проблем із законом не виявлено." },
+        ]}
+    ]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    const modal = document.getElementById('modal');
+    const modalClose = document.getElementById('modal-close');
+
+    function renderCard(person) {
+        const config = statusConfig[person.status];
+        const card = document.createElement('div');
+        card.className = `person-card bg-white rounded-lg shadow-sm p-5 border-l-4 ${config.color} cursor-pointer hover:shadow-lg transition-shadow`;
+        card.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800">${person.name}</h4>
+                    <p class="text-gray-500 text-sm">${person.title || person.department}</p>
+                </div>
+                <span class="status-icon" title="${config.label}">${config.icon}</span>
+            </div>
+        `;
+        card.addEventListener('click', () => showModal(person));
+        return card;
+    }
+    
+    function showModal(person) {
+        document.getElementById('modal-name').textContent = person.name || person.department;
+        document.getElementById('modal-title').textContent = person.title || '';
+        document.getElementById('modal-details').innerHTML = person.details;
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95'), 10);
+    }
+    
+    function hideModal() {
+        modal.classList.add('opacity-0');
+        modal.querySelector('.modal-content').classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    modalClose.addEventListener('click', hideModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            hideModal();
+        }
+    });
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('tab-active'));
+            panes.forEach(p => p.classList.add('hidden'));
+
+            tab.classList.add('tab-active');
+            const targetPane = document.getElementById(tab.dataset.tab);
+            targetPane.classList.remove('hidden');
+        });
+    });
+
+    // Initial Render Executive
+    const executiveContent = document.getElementById('executive-content');
+    dossierData.executive.forEach(person => executiveContent.appendChild(renderCard(person)));
+
+    // Initial Render Legislative
+    const legislativeContent = document.getElementById('legislative-content');
+    dossierData.legislative.forEach(person => legislativeContent.appendChild(renderCard(person)));
+    
+    // Initial Render Departments
+    const departmentsContent = document.getElementById('departments-content');
+    dossierData.departments.forEach(dept => departmentsContent.appendChild(renderCard(dept)));
+
+    // Initial Render Municipalities
+    const municipalitiesContent = document.getElementById('municipalities-content');
+    dossierData.municipalities.forEach(district => {
+        const districtContainer = document.createElement('div');
+        districtContainer.className = 'mb-8';
+        districtContainer.innerHTML = `<h3 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">${district.district}</h3>`;
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+        district.officials.forEach(person => grid.appendChild(renderCard(person)));
+        districtContainer.appendChild(grid);
+        municipalitiesContent.appendChild(districtContainer);
+    });
+    
+    // Stats and Charts for Overview
+    const allOfficials = [
+        ...dossierData.executive,
+        ...dossierData.legislative,
+        ...dossierData.departments, // Departments are also "officials" in this context
+        ...dossierData.municipalities.flatMap(d => d.officials)
+    ];
+
+    const officialsWithIssues = allOfficials.filter(p => p.status === 'Проблеми з законом' || p.status === 'Спорні моменти/Скандали' || p.status === 'Системні проблеми');
+    document.getElementById('stats-total').textContent = allOfficials.length;
+    document.getElementById('stats-issues').textContent = officialsWithIssues.length;
+
+    // Chart: Comparative analysis by branches of power
+    const ctxCorruption = document.getElementById('corruptionChart').getContext('2d');
+    const chartDataCorruption = {
+        labels: ['Виконавча влада', 'Законодавча влада', 'Департаменти', 'Муніципалітети'],
+        datasets: [{
+            label: 'З проблемами/скандалами/системні',
+            data: [
+                dossierData.executive.filter(p => p.status !== 'Без проблем').length,
+                dossierData.legislative.filter(p => p.status !== 'Без проблем').length,
+                dossierData.departments.filter(p => p.status !== 'Без проблем').length,
+                dossierData.municipalities.flatMap(d => d.officials).filter(p => p.status !== 'Без проблем').length
+            ],
+            backgroundColor: 'rgba(239, 68, 68, 0.7)', // Red-500
+            borderColor: 'rgba(239, 68, 68, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Без виявлених проблем',
+            data: [
+                dossierData.executive.filter(p => p.status === 'Без проблем').length,
+                dossierData.legislative.filter(p => p.status === 'Без проблем').length,
+                dossierData.departments.filter(p => p.status === 'Без проблем').length,
+                dossierData.municipalities.flatMap(d => d.officials).filter(p => p.status === 'Без проблем').length
+            ],
+            backgroundColor: 'rgba(34, 197, 94, 0.7)', // Green-500
+            borderColor: 'rgba(34, 197, 94, 1)',
+            borderWidth: 1
+        }]
+    };
+    new Chart(ctxCorruption, {
+        type: 'bar',
+        data: chartDataCorruption,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Кількість чиновників'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            }
+        }
+    });
+
+    // Chart: Types of offenses (Crime Types Chart)
+    const crimeTypesData = {
+        'Хабарництво': 3, // Егорова, Кулешова, Борщевская
+        'Шахрайство / Розтрата': 2, // Симоненко (200 млн), співробітники моргу
+        'Перевищення повноважень / Конфлікт інтересів': 2, // Симоненко (земля), Шкуратов
+        'Нелегітимна діяльність': 1 // Антошин
+    };
+
+    const crimeLabels = Object.keys(crimeTypesData).map(label => {
+        const words = label.split(' ');
+        let currentLine = '';
+        const lines = [];
+        for (const word of words) {
+            if ((currentLine + word).length > 16 && currentLine.length > 0) {
+                lines.push(currentLine.trim());
+                currentLine = '';
+            }
+            currentLine += word + ' ';
+        }
+        lines.push(currentLine.trim());
+        return lines;
+    });
+
+    const ctxCrimeTypes = document.getElementById('crimeTypesChart').getContext('2d');
+    new Chart(ctxCrimeTypes, {
+        type: 'bar',
+        data: {
+            labels: crimeLabels,
+            datasets: [{
+                label: 'Кількість зафіксованих випадків',
+                data: Object.values(crimeTypesData),
+                backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#10B981'], // Tailwind colors for variety
+                borderColor: '#FFFFFF',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Horizontal bars
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Кількість випадків'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                y: {
+                    ticks: {
+                        font: { size: 12 }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Типи правопорушень серед чиновників',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    color: '#1E293B'
+                }
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>
